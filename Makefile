@@ -42,15 +42,11 @@ BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
 INCLUDES	:=	include
-#ROMFS	:=	romfs
+#ROMFS		:=	romfs
 
-VERSION_MAJOR := 0
-VERSION_MINOR := 1
-VERSION_MICRO := 5
-
-APP_TITLE   := SwitchTime
-APP_AUTHOR  := 3096, thedax, cytraen, vonhabsbourg, izenn
-APP_VERSION := ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}
+APP_TITLE   := NX Time Sync
+APP_AUTHOR  := Ammako
+APP_VERSION := 1.0.0
 
 #---------------------------------------------------------------------------------
 # options for code generation

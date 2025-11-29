@@ -6,17 +6,13 @@ information. */
 bool nifmInternetIsConnected() {
     Result rs = nifmInitialize(NifmServiceType_User);
     if (R_FAILED(rs)) {
-        printf("Failed to get Internet connection status. Error code %x\n", rs);
+        printf("Failed to get Internet connection status. Error code: %x\n", rs);
         return false;
     }
 
     NifmInternetConnectionStatus nifmICS;
     rs = nifmGetInternetConnectionStatus(NULL, NULL, &nifmICS);
     nifmExit();
-
-    if (R_FAILED(rs)) {
-        printf("nifmGetInternetConnectionStatus failed with error code %x\n", rs);
-    }
 
     if (nifmICS != NifmInternetConnectionStatus_Connected) {
         return false;
@@ -28,20 +24,19 @@ bool nifmInternetIsConnected() {
 Result ntpGetTime(time_t *p_resultTime) {
     if (!nifmInternetIsConnected()) {
         printf(
-            "You're not connected to the Internet.\n"
-            "Please run try again after connecting.\n");
+            "You're not connected to the Internet. Please try again after connecting.\n");
         return -1;
     }
 
     Result rs = socketInitializeDefault();
     if (R_FAILED(rs)) {
-        printf("Failed to init socket services, error code %x\n", rs);
+        printf("Failed to init socket services. Error code: %x\n", rs);
         return rs;
     }
     printf("Socket services initialized\n");
 
     int sockfd = -1;
-    const char *server_name = "time.cloudflare.com";
+    const char *server_name = "0.pool.ntp.org";
     const uint16_t port = 123;
 
     ntp_packet packet;
@@ -56,7 +51,7 @@ Result ntpGetTime(time_t *p_resultTime) {
 
     sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (sockfd < 0) {
-        printf("Failed to open socket with error code %x\n", errno);
+        printf("Failed to open socket with error code: %x\n", errno);
         goto failed;
     }
 
@@ -83,7 +78,7 @@ Result ntpGetTime(time_t *p_resultTime) {
         goto failed;
     }
 
-    printf("Connected to time.cloudflare.com with result: %x %x\nSending time request...\n", res, errno);
+    printf("Connected to 0.pool.ntp.org\nSending time request...\n");
 
     errno = 0;
     if ((res = send(sockfd, (char *)&packet, sizeof(ntp_packet), 0)) < 0) {
@@ -91,7 +86,7 @@ Result ntpGetTime(time_t *p_resultTime) {
         goto failed;
     }
 
-    printf("Sent time request with result: %x %x, waiting for response...\n", res, errno);
+    printf("Sent time request, waiting for response...\n");
 
     errno = 0;
     if ((res = recv(sockfd, (char *)&packet, sizeof(ntp_packet), 0)) < sizeof(ntp_packet)) {
